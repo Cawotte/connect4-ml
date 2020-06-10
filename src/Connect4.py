@@ -46,7 +46,7 @@ class Connect4(object):
         self.winner = 0
         self.gameHasEnded = False
         
-        self.plyCount = 0
+        self.moveCount = 0
         
     def reset(self):
         
@@ -60,7 +60,7 @@ class Connect4(object):
         self.currentPlayer = 1
         self.winner = 0
         self.gameHasEnded = False
-        self.plyCount = 0
+        self.moveCount = 0
         
     def play(self, column):
         """
@@ -77,14 +77,24 @@ class Connect4(object):
         
         for i in range(self.height):
             
-            #If the cell is empty, place a chip
+            #If the cell is empty, play a token here
             if (self.array[column, i] == 0):
                 self.array[column, i] = self.currentPlayer
+                
+                self.moveCount += 1
+                
+                #check if move is winning
+                if (self._isWinningPlay(column, i)):   
+                    self.gameHasEnded = True
+                    self.winner = self.currentPlayer
+                elif (self.moveCount >= self.width * self.height):
+                    #Board is full, game end on draw
+                    self.gameHasEnded = True
+                    self.winner = 0
+                    
                 #change current player
                 self.currentPlayer *= -1
-                self.plyCount += 1
-                #check if move is winning
-                self._isWinningPlay(column, i)
+                
                 return True
         
         #The column is full, can't play here
@@ -156,8 +166,6 @@ class Connect4(object):
                 consecutive = 0
                 
             if (consecutive >= 4):
-                self.gameHasEnded = True
-                self.winner = value
                 return True
             
         #check the row
@@ -169,51 +177,53 @@ class Connect4(object):
                 consecutive = 0
                 
             if (consecutive >= 4):
-                self.gameHasEnded = True
-                self.winner = value
                 return True
         
         #Check the diagonals
         
-        consecutive = 0
-        #to know where the diagonal begins and end, we need to know the start and end of the diagonal
-        minV = min(column, row)
-        a = column - minV
-        b = row - minV
         
-        while a < self.width and b < column:
+        #Diagonal from bottom left to top right
+        
+        #We go toward the bottom left until we hit a wall or another value
+        consecutive = 0
+        a, b = column, row
+        a -= min(column, row)
+        b -= min(column, row)
+        
+        while a < self.width and b < self.height:
+            
             if (self.array[a, b] == value):
                 consecutive += 1
             else:
+                #not a winning diagonal
                 consecutive = 0
-                
+            
             if (consecutive >= 4):
-                self.gameHasEnded = True
-                self.winner = value
                 return True
             
-            #increment pos
+            #next pos
             a += 1
             b += 1
+        
+        
             
-        #The other diagonal
-        #a bit clunky, to improve?
+        #The other diagonal, trickier
+        consecutive = 0
         a, b = column, row
+        
         #decrement value until reaching end of diagonal
         while (a > 0 and b < self.height - 1):
             a -= 1
             b += 1
             
-        #We are now at the top left of the diagonal
-        while (a < self.width and b > 0):
+        #We are now at the top left of the diagonal, and iterate on its full lenght
+        while (a < self.width and b >= 0):
             if (self.array[a, b] == value):
                 consecutive += 1
             else:
                 consecutive = 0
                 
             if (consecutive >= 4):
-                self.gameHasEnded = True
-                self.winner = value
                 return True
             
             #increment pos

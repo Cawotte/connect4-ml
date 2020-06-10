@@ -6,6 +6,8 @@ the Connect4 is working. Kind of a unit test.
 
 from Connect4 import Connect4
 
+import random
+
 #If verbose is True, display the final boards and results of the matchs.
 verbose = True
 
@@ -24,6 +26,16 @@ tests = [
 
 match = Connect4()
 
+#Prepare random movelist
+movelist = []
+for i in range(match.width):
+    for j in range(match.height):
+        movelist.append(i)
+        
+random.shuffle(movelist)
+    
+tests.append([movelist, 0])
+
 successfulTestCount = 0
 #for each move lists
 for i in range(len(tests)):
@@ -40,6 +52,7 @@ for i in range(len(tests)):
         validMove = match.play(choice)
         if (not validMove):
            print("Non-valid move! Moving to the next one...")
+           
         
     #Verify the result of the game
     if (verbose):
