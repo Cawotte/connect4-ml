@@ -24,7 +24,7 @@ player = 1
 while not match.gameHasEnded:
     board = np.reshape(np.array(match.array).ravel(), (1,42))
     board*=player
-
+        
     prediction = clf.predict(board)
     print("Prediction array : %s" % prediction)
 
