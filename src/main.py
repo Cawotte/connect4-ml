@@ -34,4 +34,4 @@ while (not match.gameHasEnded):
         print("Can't play this move, the column is full!")
         
 match.printResults()
-
+del(match)

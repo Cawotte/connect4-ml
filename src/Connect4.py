@@ -6,6 +6,11 @@ Created on Tue Jun  9 15:36:00 2020
 """
 
 import numpy as np
+import os
+import csv
+from termcolor import colored
+
+DATABASE_FILE_NAME = "connect4-manual-database.csv"
 
 class Connect4(object):
     """
@@ -40,7 +45,7 @@ class Connect4(object):
         self.width = width
         self.height = height
         self.array = np.zeros(shape=(width, height))
-        
+         
         #current game stats
         self.currentPlayer = 1
         self.winner = 0
@@ -48,6 +53,24 @@ class Connect4(object):
         
         self.moveCount = 0
         
+        #create or open database file
+        if os.path.isfile(DATABASE_FILE_NAME) :
+            self.datafile = open(DATABASE_FILE_NAME, 'a', newline='')
+            self.datawriter = csv.writer(self.datafile, delimiter=';')
+        else :
+            self.datafile = open(DATABASE_FILE_NAME, 'a', newline='')
+            self.datawriter = csv.writer(self.datafile, delimiter=';')
+            l=[]
+            for i in range(self.width) :
+                for j in range(self.height) :
+                    l.append(f"point  ({i},{j})")
+            for i in range(self.width) :
+                l.append(f"col {i}")
+            self.datawriter.writerow(l)
+    
+    def __del__(self) :
+        self.datafile.close()
+    
     def reset(self):
         
         """
@@ -79,6 +102,10 @@ class Connect4(object):
             
             #If the cell is empty, play a token here
             if (self.array[column, i] == 0):
+                
+                #save state and choice in database
+                self._updateDatabase(column)
+                
                 self.array[column, i] = self.currentPlayer
                 
                 self.moveCount += 1
@@ -106,17 +133,22 @@ class Connect4(object):
         """
         Print the board state in the console.
         """
+        print("")
         for j in range(self.height):
             line = ""
             for i in range(self.width):
                 value = self.array[i, self.height - j - 1]
                 if (value == 0):
-                    line += " - "
+                    line += colored(" - ", 'white')
                 elif (value == 1):
-                    line += " X "
+                    line += colored(" X ", 'cyan')
                 elif (value == -1):
-                    line += " 0 "
+                    line += colored(" 0 ", 'red')
             print(line)
+        print("---"*self.width)
+        for i in range(self.width):
+            print(f" {i} ", end='')
+        print("")
             
     def printResults(self):
         """
@@ -124,7 +156,6 @@ class Connect4(object):
         """
         print("---- RESULTS -----")
         if (self.gameHasEnded):
-            winnerStr = ""
             if (self.winner == 1):
                 print("Player 1 has won the match!")
             elif (self.winner == -1):
@@ -232,8 +263,20 @@ class Connect4(object):
             
         #Not line of 4 found nowhere, no winner
         return False
-        
     
     
-    
+    def _updateDatabase(self, column) :
+        """
+        Update the database with the current game and column chosen
+        """
+        l=[]
+        for i in range(self.width) :
+            for j in range(self.height) :
+                l.append(int(self.array[i,j]*self.currentPlayer))
+        for col in range(self.width) :
+            if col==column :
+                l.append(1)
+            else :
+                l.append(0)
+        self.datawriter.writerow(l)
     
