@@ -11,7 +11,7 @@ from Connect4 import Connect4
 import sys #To exit main
 
 #Initialize a game
-match = Connect4(register=False)
+match = Connect4(register=True)
 
 while (not match.gameHasEnded):
     
