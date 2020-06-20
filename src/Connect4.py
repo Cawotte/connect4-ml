@@ -39,7 +39,7 @@ class Connect4(object):
         (0, 2) is empty
         """
     
-    def __init__(self, width = 7, height = 6):
+    def __init__(self, width = 7, height = 6, register=False):
         
         #gameboard
         self.width = width
@@ -53,23 +53,27 @@ class Connect4(object):
         
         self.moveCount = 0
         
-        #create or open database file
-        if os.path.isfile(DATABASE_FILE_NAME) :
-            self.datafile = open(DATABASE_FILE_NAME, 'a', newline='')
-            self.datawriter = csv.writer(self.datafile, delimiter=';')
-        else :
-            self.datafile = open(DATABASE_FILE_NAME, 'a', newline='')
-            self.datawriter = csv.writer(self.datafile, delimiter=';')
-            l=[]
-            for i in range(self.width) :
-                for j in range(self.height) :
-                    l.append(f"point  ({i},{j})")
-            for i in range(self.width) :
-                l.append(f"col {i}")
-            self.datawriter.writerow(l)
+        self.register = register
+        
+        if self.register :
+            #create or open database file
+            if os.path.isfile(DATABASE_FILE_NAME) :
+                self.datafile = open(DATABASE_FILE_NAME, 'a', newline='')
+                self.datawriter = csv.writer(self.datafile, delimiter=';')
+            else :
+                self.datafile = open(DATABASE_FILE_NAME, 'a', newline='')
+                self.datawriter = csv.writer(self.datafile, delimiter=';')
+                l=[]
+                for i in range(self.width) :
+                    for j in range(self.height) :
+                        l.append(f"point  ({i},{j})")
+                for i in range(self.width) :
+                    l.append(f"col {i}")
+                self.datawriter.writerow(l)
     
     def __del__(self) :
-        self.datafile.close()
+        if self.register :
+            self.datafile.close()
     
     def reset(self):
         
@@ -103,8 +107,9 @@ class Connect4(object):
             #If the cell is empty, play a token here
             if (self.array[column, i] == 0):
                 
-                #save state and choice in database
-                self._updateDatabase(column)
+                if self.register :
+                    #save state and choice in database
+                    self._updateDatabase(column)
                 
                 self.array[column, i] = self.currentPlayer
                 
