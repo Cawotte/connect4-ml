@@ -71,12 +71,11 @@ while not match.gameHasEnded:
     prediction = clf.predict(board)
     print("Prediction array : %s" % prediction)
 
-    col_to_play = prediction.argmax()
-    print("Predicted move : %s" % col_to_play)
-    validMove = match.play(col_to_play)
-    if not validMove:
-        print("Move is not valid, stopping...")
-        break
+    decisions = np.argsort(prediction)[0][::-1]
+    print(decisions)
+    i=0
+    while not match.play(decisions[i]) :
+        i+=1
     match.printBoard()
     player*=-1
     
@@ -94,9 +93,10 @@ from Connect4 import Connect4
 #creation of the classifier
 clf = Sequential()
 input_img = (7, 6, 1)
-clf.add(Conv2D(16, kernel_size=(5,5), activation='sigmoid', padding='same', input_shape=input_img))
+clf.add(Conv2D(16, kernel_size=(5,5), activation='sigmoid', input_shape=input_img))
 clf.add(MaxPooling2D(pool_size=(2, 2)))
 clf.add(Flatten())
+clf.add(Dense(50, activation='sigmoid'))
 clf.add(Dense(7, activation='relu'))
 
 clf.compile(optimizer='adam', loss='categorical_crossentropy')
@@ -129,9 +129,10 @@ while not match.gameHasEnded:
 
     col_to_play = prediction.argmax()
     print("Predicted move : %s" % col_to_play)
-    validMove = match.play(col_to_play)
-    if not validMove:
-        print("Move is not valid, stopping...")
-        break
+    decisions = np.argsort(prediction)[0][::-1]
+    print(decisions)
+    i=0
+    while not match.play(decisions[i]) :
+        i+=1
     match.printBoard()
     player*=-1
