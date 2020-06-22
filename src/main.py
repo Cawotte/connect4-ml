@@ -12,17 +12,16 @@ import random
 import pandas as pd
 from preprocessing import mirrorDouble
 
+from shutil import copyfile
+
 database_name = "connect4-manual-database"
 
 #Initiliaze database
 mainDbName = database_name + ".csv"
 mirrorDbName = database_name + "-mirror.csv"
 
-#We are gonna copy the registered database, and mirror it
-main_data = pd.read_csv(mainDbName)
-
-#copy the main database into another file
-mirror_data = main_data.to_csv(mirrorDbName) 
+#We are gonna use tehe copy of the registered database, and mirror it
+dbMirror = copyfile(mainDbName, mirrorDbName)
 #mirror it
 mirrorDouble(mirrorDbName) 
 
@@ -38,7 +37,7 @@ player1 = HumanPlayer(match)
 player2 = MLPCPlayer(match, train_data)
 players = [player1, player2]
 
-gamesLeft = 3
+gamesLeft = 15
 
 while gamesLeft > 0:
     
