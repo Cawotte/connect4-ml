@@ -107,7 +107,8 @@ class Connect4(object):
             #If the cell is empty, play a token here
             if (self.array[column, i] == 0):
                 
-                if self.register :
+                if self.register and self.currentPlayer == 1:
+                    print("Move registered!")
                     #save state and choice in database
                     self._updateDatabase(column)
                 

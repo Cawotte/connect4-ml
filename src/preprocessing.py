@@ -7,19 +7,19 @@ Created on Tue Jun 16 14:53:39 2020
 
 import csv
 
-def mirorDouble(fileName) :
+def mirrorDouble(fileName) :
     with open(fileName, 'r+', newline='') as file:
         dataReader = csv.reader(file, delimiter=';')
         newData = []
         for row in dataReader :
-            newLine = createMiror(row)
+            newLine = createMirror(row)
             newData.append(newLine)
         
         dataWriter = csv.writer(file, delimiter=';')
         for row in newData[1:] :
             dataWriter.writerow(row)
 
-def createMiror(l) :
+def createMirror(l) :
     newL = []
     width = 7
     height = 6
