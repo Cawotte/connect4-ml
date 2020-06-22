@@ -16,20 +16,19 @@ from shutil import copyfile
 
 database_name = "connect4-manual-database"
 
-#Initiliaze database
+# ----- Initiliaze databases -----
 mainDbName = database_name + ".csv"
 mirrorDbName = database_name + "-mirror.csv"
 
-#We are gonna use tehe copy of the registered database, and mirror it
+#Copy the main database,
 dbMirror = copyfile(mainDbName, mirrorDbName)
-#mirror it
-mirrorDouble(mirrorDbName) 
+mirrorDouble(mirrorDbName)  # then mirror it
 
-#Use the mirrored data
-train_data = pd.read_csv('./' + mirrorDbName, sep=';')
+train_data = pd.read_csv('./' + mirrorDbName, sep=';') #Use the mirrored data
+train_data.drop_duplicates()
 
 
-#Initialize a game
+# ------ Initialize a game -----
 match = Connect4(register=True)
 
 
@@ -43,8 +42,12 @@ while gamesLeft > 0:
     
     print("Starting a new game! #", gamesLeft)
     
-    tour = 0
+    tour = random.choice([0,1])
     while (not match.gameHasEnded):
+        
+        #If it's the player's turn, register the move.
+        match.register = (tour == 0)
+        
         players[tour].play()
         match.printBoard()
         tour = 1-tour
