@@ -36,7 +36,7 @@ player1 = HumanPlayer(match)
 player2 = MLPCPlayer(match, train_data)
 players = [player1, player2]
 
-gamesLeft = 15
+gamesLeft = 20
 
 while gamesLeft > 0:
     
@@ -56,3 +56,6 @@ while gamesLeft > 0:
     match.reset()
     
     gamesLeft -= 1
+
+
+print("All games finished!")

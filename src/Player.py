@@ -7,6 +7,14 @@ from abc import ABC, abstractmethod
 
 from sklearn.neural_network import MLPClassifier
 
+import keras
+from keras.models import Sequential,Input,Model
+from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Conv2D, MaxPooling2D
+from keras.layers.normalization import BatchNormalization
+from keras.layers.advanced_activations import LeakyReLU
+from sklearn.model_selection import train_test_split
+
 class Player(ABC) :
     """
         An abstract class that represents a Connect4 Player
@@ -70,16 +78,28 @@ class MLPCPlayer(Player) :
     def __init__(self, game, database, nb_iter=2000):
         Player.__init__(self,game)
 
-        X_train = database.values[:,:-7]
+        X = database.values[:,:-7]
+        y = database.values[:,-7:]
         
-        y_train = database.values[:,-7:]
+        #Prepare data
+        X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2)
         
-        self.clf = MLPClassifier(hidden_layer_sizes=(30,15), activation='relu', solver='adam', max_iter=nb_iter)
-        self.clf.fit(X_train, y_train)
+        #Init model
+        self.clf = Sequential()
+             
+        self.clf.add(Dense(42, activation='relu'))
+        self.clf.add(Dense(21, activation='softmax'))
+        self.clf.add(Dense(14, activation='relu'))      
+        self.clf.add(Dense(7, activation='softmax'))
+        
+        self.clf.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Adam(),metrics=['accuracy'])
+        
+        self.clf.fit(X_train, y_train, batch_size=32, epochs=100,verbose=1,validation_data=(X_valid, y_valid))
+        self.clf.summary()
     
     def play(self) :
         board = np.reshape(np.array(self.game.array).ravel(), (1,42))
-        board*=self.game.currentPlayer
+        #board *= self.game.currentPlayer
     
         prediction = self.clf.predict(board)
     
