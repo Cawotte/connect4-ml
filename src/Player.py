@@ -89,20 +89,12 @@ class MLPCPlayer(Player) :
              
         self.clf.add(Dense(42, activation='relu'))
         self.clf.add(Dense(21, activation='softmax'))
-        self.clf.add(Dense(14, activation='relu'))
-        #self.clf.add(Flatten())
-        #self.clf.add(LeakyReLU(alpha=0.1))  
-        #self.clf.add(Conv2D(32, kernel_size=(2, 2),activation='linear',input_shape=(1, 42),padding='same'))
-        #self.clf.add(LeakyReLU(alpha=0.1))
-        #self.clf.add(MaxPooling2D((2, 2),padding='same'))
-        #self.clf.add(Conv2D(64, (3, 3), activation='linear',padding='same'))          
-        
+        self.clf.add(Dense(14, activation='relu'))      
         self.clf.add(Dense(7, activation='softmax'))
         
         self.clf.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Adam(),metrics=['accuracy'])
         
-        #self.clf = MLPClassifier(hidden_layer_sizes=(30,15), activation='logistic', solver='lbfgs', max_iter=nb_iter)
-        self.clf.fit(X_train, y_train, batch_size=32, epochs=50,verbose=1,validation_data=(X_valid, y_valid))
+        self.clf.fit(X_train, y_train, batch_size=32, epochs=100,verbose=1,validation_data=(X_valid, y_valid))
         self.clf.summary()
     
     def play(self) :
