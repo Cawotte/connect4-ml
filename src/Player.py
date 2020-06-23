@@ -15,6 +15,8 @@ from keras.layers.normalization import BatchNormalization
 from keras.layers.advanced_activations import LeakyReLU
 from sklearn.model_selection import train_test_split
 
+import matplotlib.pyplot as plt
+
 class Player(ABC) :
     """
         An abstract class that represents a Connect4 Player
@@ -47,6 +49,19 @@ class HumanPlayer(Player) :
     
     def play(self) :
         validMove = False
+        if self.game.drawBoard:
+            
+            while not validMove:
+                while self.game.playCol is None:
+                    # self.game.drawBoardPyplot()
+                    plt.pause(0.001)
+                    # time.sleep(1)
+                validMove = self.game.play(self.game.playCol)
+                if not validMove :
+                    print("Can't play this move, the column is full!")
+                self.game.playCol = None
+            return
+
         while not validMove :
             choice = -1
             #while the column choice is not valid, scanf

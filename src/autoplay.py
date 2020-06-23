@@ -59,6 +59,7 @@ for i in range(len(tests)):
         print()
         match.printBoard()
         match.printResults()
+        match.drawBoard()
         print()
         
     if (match.winner == expectedResult):
@@ -66,7 +67,7 @@ for i in range(len(tests)):
         successfulTestCount += 1
     else:
         print("Test #", i, "failed!")
-        
+    
     match.reset()
         
 print("Test successful : ", successfulTestCount, "/", len(tests))
