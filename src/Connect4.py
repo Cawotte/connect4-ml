@@ -10,6 +10,8 @@ import os
 import csv
 from termcolor import colored
 
+import matplotlib.pyplot as plt
+
 DATABASE_FILE_NAME = "connect4-manual-database.csv"
 
 class Connect4(object):
@@ -39,13 +41,25 @@ class Connect4(object):
         (0, 2) is empty
         """
     
-    def __init__(self, width = 7, height = 6, register=False):
+    def __init__(self, width = 7, height = 6, register=False, drawBoard=False):
         
         #gameboard
         self.width = width
         self.height = height
         self.array = np.zeros(shape=(width, height))
-         
+
+        #pyplot
+        self.drawBoard = drawBoard
+        self.drawOffsetX = 1.0 / self.width
+        self.drawOffsetY = 1.0 / self.height
+        self.circleSize = 0.05
+        self.fig, self.ax = plt.subplots()
+        self.fig.canvas.mpl_connect('button_press_event', self)
+        self.playCol = None
+        plt.ion()
+        plt.show()
+
+
         #current game stats
         self.currentPlayer = 1
         self.winner = 0
@@ -75,6 +89,26 @@ class Connect4(object):
         if self.register :
             self.datafile.close()
     
+    def __call__(self, event):
+        print('click', event)
+        print(event.name)
+        if event.name != "button_press_event":
+            return
+        if event.xdata is None:
+            return
+        clickPos = event.xdata * self.width
+        col = int(round(clickPos))
+        if col < 0:
+            col = 0
+        self.playCol = col
+        print(event.xdata)
+        print(event.xdata * self.width)
+        print(round(event.xdata * self.width))
+        print("You selected column %s" % (self.playCol + 1))
+        # if playCol >= 0 and playCol <= 6:
+        #     pass
+
+    
     def reset(self):
         
         """
@@ -101,7 +135,7 @@ class Connect4(object):
         -----------
         boolean : True if the move is performed, False if the column is full
         """
-        
+        print("playing! %s" % column)
         for i in range(self.height):
             
             #If the cell is empty, play a token here
@@ -133,9 +167,39 @@ class Connect4(object):
         #The column is full, can't play here
         
         return False
+
+    def drawBoardPyplot(self):
+        
+        """
+        Draw the board with pyplot
+        """
+        self.ax.clear()
+        for j in range(self.height):
+            for i in range(self.width):
+                value = self.array[i, j]
+                boardPos = (i * self.drawOffsetX, j * self.drawOffsetY)
+                # print(boardPos)
+                # print("TAMERE")
+                if (value == 0):
+                    circle = plt.Circle(boardPos, self.circleSize, color='w')
+                    self.ax.add_patch(circle)
+                    pass
+                elif (value == 1):
+                    circle1 = plt.Circle(boardPos, self.circleSize, color='b')
+                    self.ax.add_patch(circle1)
+                elif (value == -1):
+                    circle2 = plt.Circle(boardPos, self.circleSize, color='r')
+                    self.ax.add_patch(circle2)
+        # fig.plot()
+        self.ax.plot()
+        # self.fig.show()
+        # plt.show()
+        plt.draw()
+        plt.pause(0.001)
+
     
     def printBoard(self):
-        
+
         """
         Print the board state in the console.
         """
@@ -155,6 +219,8 @@ class Connect4(object):
         for i in range(self.width):
             print(f" {i} ", end='')
         print("")
+        if (self.drawBoard):
+            self.drawBoardPyplot()
             
     def printResults(self):
         """

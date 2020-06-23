@@ -29,7 +29,7 @@ train_data.drop_duplicates()
 
 
 # ------ Initialize a game -----
-match = Connect4(register=True)
+match = Connect4(register=True, drawBoard=True)
 
 
 player1 = HumanPlayer(match)
@@ -48,8 +48,8 @@ while gamesLeft > 0:
         #If it's the player's turn, register the move.
         match.register = (tour == 0)
         
-        players[tour].play()
         match.printBoard()
+        players[tour].play()
         tour = 1-tour
             
     match.printResults()
