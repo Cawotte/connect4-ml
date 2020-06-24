@@ -97,19 +97,19 @@ class MLPCPlayer(Player) :
         y = database.values[:,-7:]
         
         #Prepare data
-        X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2)
+        #X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2)
         
         #Init model
         self.clf = Sequential()
              
         self.clf.add(Dense(42, activation='relu'))
-        self.clf.add(Dense(21, activation='softmax'))
+        self.clf.add(Dense(21, activation='sigmoid'))
         self.clf.add(Dense(14, activation='relu'))      
         self.clf.add(Dense(7, activation='softmax'))
         
         self.clf.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Adam(),metrics=['accuracy'])
         
-        self.clf.fit(X_train, y_train, batch_size=32, epochs=100,verbose=1,validation_data=(X_valid, y_valid))
+        self.clf.fit(X, y, batch_size=32, epochs=100,verbose=1)
         self.clf.summary()
     
     def play(self) :
