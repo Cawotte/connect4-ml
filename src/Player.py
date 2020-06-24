@@ -114,7 +114,7 @@ class MLPCPlayer(Player) :
     
     def play(self) :
         board = np.reshape(np.array(self.game.array).ravel(), (1,42))
-        #board *= self.game.currentPlayer
+        board *= self.game.currentPlayer
     
         prediction = self.clf.predict(board)
     
