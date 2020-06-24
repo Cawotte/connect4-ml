@@ -174,12 +174,12 @@ class Connect4(object):
         Draw the board with pyplot
         """
         self.ax.clear()
-        for j in range(self.height):
-            for i in range(self.width):
+        plt.axvline(x=-self.drawOffsetX/2, ymin=0, ymax=1)
+        for i in range(self.width):
+            plt.axvline(x=i*self.drawOffsetX + self.drawOffsetX/2, ymin=0, ymax=1)
+            for j in range(self.height):
                 value = self.array[i, j]
                 boardPos = (i * self.drawOffsetX, j * self.drawOffsetY)
-                # print(boardPos)
-                # print("TAMERE")
                 if (value == 0):
                     circle = plt.Circle(boardPos, self.circleSize, color='w')
                     self.ax.add_patch(circle)
